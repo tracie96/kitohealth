@@ -9,6 +9,7 @@ interface Questionnaire {
   _id: string;
   title: string;
 }
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const QuestionnaireList = () => {
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
@@ -20,7 +21,7 @@ const QuestionnaireList = () => {
     const fetchQuestionnaires = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/questionnaire"
+            `${baseURL}/api/questionnaire`
         );
         setQuestionnaires(response.data);
       } catch (error) {

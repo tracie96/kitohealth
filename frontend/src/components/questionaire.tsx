@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const QuestionnaireForm = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const QuestionnaireForm = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/questionnaire', formattedValues);
+      const response = await axios.post(`${baseURL}/api/questionnaire`, formattedValues);
       console.log(response.data);
       form.resetFields(); 
     } catch (error) {

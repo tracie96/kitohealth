@@ -20,6 +20,7 @@ interface Questionnaire {
 interface FormValues {
   [key: string]: string;
 }
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const QuestionnaireView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,7 @@ const QuestionnaireView: React.FC = () => {
   useEffect(() => {
     const fetchQuestionnaire = async () => {
       try {
-        const response = await axios.get<Questionnaire>(`http://localhost:5000/api/questionnaire/${id}`);
+        const response = await axios.get<Questionnaire>(`${baseURL}/api/questionnaire/${id}`);
         setQuestionnaire(response.data);
         console.log("Fetched Questionnaire:", response.data); // Debug log
       } catch (error) {
@@ -48,7 +49,7 @@ const QuestionnaireView: React.FC = () => {
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/questionnaire/${id}/submit`, {
+      const response = await axios.post(`${baseURL}/api/questionnaire/${id}/submit`, {
         answers: Object.values(values),
       });
 
