@@ -1,8 +1,7 @@
-import { Request, Response } from 'express';
-import { Questionnaire } from '../model/questionnaire';
+import { Questionnaire } from '../model/questionnaire.mjs';
 
 // Create a new questionnaire
-export const getQuestionnaire = async (req: Request, res: Response) => {
+export const getQuestionnaire = async (req, res) => {
   try {
     const questionnaires = await Questionnaire.find();
     if (questionnaires.length === 0) {
@@ -14,9 +13,9 @@ export const getQuestionnaire = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error fetching questionnaires' });
   }
 };
-// Create a new questionnaire
 
-export const createQuestionnaire = async (req: Request, res: Response) => {
+// Create a new questionnaire
+export const createQuestionnaire = async (req, res) => {
   console.log(req.body);
   const { title, questions } = req.body;
   try {
@@ -30,7 +29,7 @@ export const createQuestionnaire = async (req: Request, res: Response) => {
 };
 
 // Get by by ID
-export const getQuestionnaireById = async (req: Request, res: Response) => {
+export const getQuestionnaireById = async (req, res) => {
   try {
     const questionnaire = await Questionnaire.findById(req.params.id);
     if (!questionnaire) {
@@ -43,8 +42,7 @@ export const getQuestionnaireById = async (req: Request, res: Response) => {
 };
 
 // Submit my answers and get results
-
-export const submitAnswers = async (req: Request, res: Response) => {
+export const submitAnswers = async (req, res) => {
   const { answers } = req.body;
   try {
     const questionnaire = await Questionnaire.findById(req.params.id);
@@ -53,7 +51,7 @@ export const submitAnswers = async (req: Request, res: Response) => {
     }
 
     let score = 0;
-    questionnaire.questions.forEach((question: any, index: number) => {
+    questionnaire.questions.forEach((question, index) => {
       const userAnswer = answers[index];
       if (question.correctAnswer === userAnswer) {
         score += question.weight;

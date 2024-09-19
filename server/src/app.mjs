@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import questionnaireRoutes from './routes/questionnaireRoutes';
+import questionnaireRoutes from './routes/questionnaireRoutes.mjs';
 
 const app = express();
 app.use(bodyParser.json());
