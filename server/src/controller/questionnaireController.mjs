@@ -1,6 +1,6 @@
 import { Questionnaire } from '../model/questionnaire.mjs';
 
-// Create a new questionnaire
+// get al questionnaires
 export const getQuestionnaire = async (req, res) => {
   try {
     const questionnaires = await Questionnaire.find();
@@ -15,20 +15,21 @@ export const getQuestionnaire = async (req, res) => {
 };
 
 // Create a new questionnaire
-export const createQuestionnaire = async (req, res) => {
-  console.log(req.body);
-  const { title, questions } = req.body;
-  try {
-    const newQuestionnaire = new Questionnaire({ title, questions });
-    await newQuestionnaire.save();
-    res.status(201).json({ message: 'Questionnaire created', questionnaire: newQuestionnaire });
-  } catch (error) {
-    console.log({ error });
-    res.status(500).json({ error: 'Failed to create questionnaire' });
-  }
-};
+  export const createQuestionnaire = async (req, res) => {
+    const { title, questions } = req.body;
+    try {
+      const newQuestionnaire = new Questionnaire({ title, questions });
+      await newQuestionnaire.save();
+      res.status(201).json({ message: 'Questionnaire created', questionnaire: newQuestionnaire });
+    } catch (error) {
+      console.error('Failed to create questionnaire:', error);
+      res.status(500).json({ error: 'Failed to create questionnaire' });
+    }
+  };
+  
 
-// Get by by ID
+
+// Get by ID
 export const getQuestionnaireById = async (req, res) => {
   try {
     const questionnaire = await Questionnaire.findById(req.params.id);
@@ -41,7 +42,7 @@ export const getQuestionnaireById = async (req, res) => {
   }
 };
 
-// Submit my answers and get results
+// Submit users answers and get result which i set to display on my ui
 export const submitAnswers = async (req, res) => {
   const { answers } = req.body;
   try {

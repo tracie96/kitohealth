@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Form, Input, Button, Typography, message, Card, Divider, Progress } from 'antd';
+import { Form, Radio, Button, Typography, message, Card, Divider, Progress, Spin, Alert } from 'antd';
+import { useParams } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
-interface Answer {
-  answer: string;
-}
-
 interface Question {
   text: string;
-  answers: Answer[];
+  answers: string[]; 
   correctAnswer: string;
   weight: number;
 }
@@ -21,38 +18,37 @@ interface Questionnaire {
 }
 
 interface FormValues {
-  [key: string]: string; 
+  [key: string]: string;
 }
 
-interface QuestionnaireViewProps {
-  questionnaireId: string;
-}
-
-const QuestionnaireView: React.FC<QuestionnaireViewProps> = ({ questionnaireId }) => {
+const QuestionnaireView: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [questionnaire, setQuestionnaire] = useState<Questionnaire | null>(null);
   const [form] = Form.useForm();
   const [percentage, setPercentage] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuestionnaire = async () => {
       try {
-        const response = await axios.get<Questionnaire>(`http://localhost:5000/api/questionnaire/${questionnaireId}`);
+        const response = await axios.get<Questionnaire>(`http://localhost:5000/api/questionnaire/${id}`);
         setQuestionnaire(response.data);
+        console.log("Fetched Questionnaire:", response.data); // Debug log
       } catch (error) {
         console.error('Error fetching questionnaire', error);
-        message.error('Failed to load the questionnaire.');
+        setError('Failed to load the questionnaire.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchQuestionnaire();
-  }, [questionnaireId]);
+  }, [id]);
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/questionnaire/${questionnaireId}/submit`, {
+      const response = await axios.post(`http://localhost:5000/api/questionnaire/${id}/submit`, {
         answers: Object.values(values),
       });
 
@@ -60,7 +56,7 @@ const QuestionnaireView: React.FC<QuestionnaireViewProps> = ({ questionnaireId }
       const totalWeight = questionnaire?.questions.reduce((total, question) => total + question.weight, 0) || 0;
       const percentageScore = totalWeight > 0 ? (score / totalWeight) * 100 : 0;
 
-      setPercentage(percentageScore);
+      setPercentage(Math.round(percentageScore)); 
 
       message.success('Answers submitted successfully!');
     } catch (error) {
@@ -69,7 +65,17 @@ const QuestionnaireView: React.FC<QuestionnaireViewProps> = ({ questionnaireId }
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spin tip="Loading..." />
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Alert message={error} type="error" />
+    </div>
+  );
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
@@ -90,7 +96,13 @@ const QuestionnaireView: React.FC<QuestionnaireViewProps> = ({ questionnaireId }
                 label={<Text strong>{`Question ${index + 1}: ${question.text}`}</Text>}
                 rules={[{ required: true, message: 'Please answer this question!' }]}
               >
-                <Input placeholder="Type your answer here..." />
+                <Radio.Group style={{flexDirection:'column'}}>
+                  {question.answers.map((answer, idx) => (
+                    <Radio key={idx} value={answer}>
+                      {answer}
+                    </Radio>
+                  ))}
+                </Radio.Group>
               </Form.Item>
             </Card>
           ))}
@@ -110,14 +122,14 @@ const QuestionnaireView: React.FC<QuestionnaireViewProps> = ({ questionnaireId }
             <Progress
               type="circle"
               percent={percentage}
-              format={percent => `${percent?.toFixed(2)}%`}
+              format={percent => `${percent}%`}
               width={120}
               strokeColor={{
                 '0%': '#108ee9',
                 '100%': '#87d068',
               }}
             />
-            <Text>{`You scored ${percentage.toFixed(2)}%`}</Text>
+            <Text>{`You scored ${percentage}%`}</Text>
           </div>
         )}
       </Card>

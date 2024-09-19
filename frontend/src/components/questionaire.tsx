@@ -1,13 +1,14 @@
 import React from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Typography, Card, Divider } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
 const QuestionnaireForm = () => {
   const [form] = Form.useForm();
-
+  const navigate = useNavigate();
   const submitForm = async (values: any) => {
     const formattedValues = {
       ...values,
@@ -20,7 +21,7 @@ const QuestionnaireForm = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/questionnaire', formattedValues);
       console.log(response.data);
-      form.resetFields(); // Clear form fields after successful submission
+      form.resetFields(); 
     } catch (error) {
       console.error('Error submitting questionnaire', error);
     }
@@ -30,7 +31,13 @@ const QuestionnaireForm = () => {
     <div style={{ padding: '20px' }}>
       <Card bordered={false} style={{ maxWidth: 800, margin: '0 auto' }}>
       <Title level={2}>Create a Questionnaire</Title>
-
+      <Button 
+          type="link" 
+          onClick={() => navigate('/')}
+          style={{ marginBottom: '20px' }}
+        >
+        Back to List
+        </Button>
         <Form
           form={form}
           onFinish={submitForm}

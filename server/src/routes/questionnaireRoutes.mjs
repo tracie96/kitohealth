@@ -10,7 +10,7 @@ router.post('/', createQuestionnaire);
 // Get all questionnaire
 router.get('/', getQuestionnaire);
 
-// Get by by ID
+// Get by ID
 router.get('/:id', getQuestionnaireById);
 
 // Submit my answers and get results
