@@ -1,0 +1,16 @@
+# Ignore node_modules and other unwanted files within these directories
+frontend/node_modules/
+server/node_modules/
+
+# Ignore build or dist folders if they exist
+frontend/build/
+server/build/
+frontend/dist/
+server/dist/
+
+# Ignore logs, temporary files, and environment-specific files
+frontend/.env
+server/.env
+*.log
+*.tmp
+.DS_Store
